@@ -1,5 +1,6 @@
 from odoo import http
 from odoo.http import request, Response
+import json
 
 
 class EventController(http.Controller):
@@ -30,23 +31,25 @@ class EventController(http.Controller):
             "event": event.read(),
         }
 
-    @http.route("/api/events", type="json", auth="user", methods=["GET"])
+    @http.route("/api/events", type="http", auth="user", methods=["GET"])
     def list_events(self, **kwargs):
         page_number = int(kwargs.get("page[number]", 1))
         page_size = int(kwargs.get("page[size]", 10))
 
         offset = (page_number - 1) * page_size
-        events = request.env["event.event"].search([], limit=page_size, offset=offset)
+        events = request.env["event.event"].sudo().search([], limit=page_size, offset=offset)
 
-        return {
+        response =  json.dumps({
             "status": "success",
-            "events": events.read(),
+            "events": events.sudo().read(["title", "location", "date"]),
             "pagination": {
                 "page_number": page_number,
                 "page_size": page_size,
                 "total": request.env["event.event"].sudo().search_count([]),
             },
-        }
+        }, default=str)
+
+        return response
 
     @http.route("/api/events/<int:event_id>", type="json", auth="user", methods=["PUT"])
     def update_event(self, event_id, **kwargs):
