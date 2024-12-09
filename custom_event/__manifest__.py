@@ -9,10 +9,17 @@
     "website": "mohiuddinru.github.io",
     "category": "Uncategorized",
     "version": "0.1",
-    "depends": ["base"],
+    "depends": ["base", "web", "website"],
     "data": [
         'security/ir.model.access.csv',
+        "views/snippet_template.xml",
         "views/views.xml",
         "views/templates.xml",
     ],
+    "assets": {
+        'web.assets_frontend': [
+            "/custom_event/static/src/components/**/*"
+        ],
+    }
 }
+
