@@ -1,0 +1,17 @@
+<odoo>
+    <template id="s_event" name="Custom Snippet">
+        <section class="s_event">
+            <h2 style="text-align: center; margin-top: 4rem;">
+                Custom Events
+            </h2>
+            <div class="custom_events">
+            </div>
+        </section>
+    </template>
+
+    <template id="snippets" inherit_id="website.snippets">
+        <xpath expr="//div[@id='snippet_effect']//t[@t-snippet][last()]" position="after">
+            <t t-snippet="custom_event.s_event" string="Custom Events" />
+        </xpath>
+    </template>
+</odoo>
