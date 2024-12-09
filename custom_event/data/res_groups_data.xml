@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_event_admin" model="res.groups">
+        <field name="name">Admin</field>
+    </record>
+    <record id="group_event_editor" model="res.groups">
+        <field name="name">Editor</field>
+    </record>
+</odoo>
