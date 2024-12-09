@@ -1,8 +1,13 @@
+#pip install pyjwt
 import jwt
 import datetime
 from odoo import http
 from odoo.http import request, Response
 import json
+import odoo
+import odoo.modules.registry
+from odoo.tools.translate import _
+
 
 SECRET_KEY = "secret_key"
 
@@ -21,10 +26,14 @@ class AuthController(http.Controller):
                 raise ValueError("Password required")
 
             user = request.env["res.users"].sudo().search([("login", "=", username)])
+            values = {}
 
-            if not user or not user._check_credentials(password, {'interactive': True}):
-                raise ValueError("Invalid username or password")
+            uid = request.session.authenticate(request.db, username, password)
+            if not uid:
+                raise ValueError(_('Wrong login/password'))
 
+            request.params["login_success"] = True
+            user = user.with_user(1)
             payload = {
                 "userId": user.id,
                 "lgin": user.login,
@@ -34,17 +43,27 @@ class AuthController(http.Controller):
 
             token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
-            response =  {
-                "status": "error",
+            response = {
+                "status": "success",
                 "message": "Authentication successful",
                 "token": token,
             }
             return json.dumps(response, default=str)
 
+        except odoo.exceptions.AccessDenied as e:
+                if e.args == odoo.exceptions.AccessDenied().args:
+                    values["error"] = _("Wrong login/password")
+                else:
+                    values["error"] = e.args[0]
+                raise Exception(values['error'])
+
         except ValueError as e:
             return json.dumps({"status": "error", "message": str(e)}, default=str)
         except Exception as e:
-            return json.dumps({
-                "status": "error",
-                "message": "An unexpected error occurred: " + str(e),
-            }, default=str)
+            return json.dumps(
+                {
+                    "status": "error",
+                    "message": "An unexpected error occurred: " + str(e),
+                },
+                default=str,
+            )
