@@ -23,5 +23,7 @@ export class Events extends Component {
 
 whenReady(() => {
     let $selector = document.querySelector(".custom_events")
-    mount(Events, $selector, { templates });
+    if ($selector) {
+        mount(Events, $selector, { templates });
+    }
 });
