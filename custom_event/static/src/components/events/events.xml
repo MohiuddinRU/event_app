@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <templates xml:space="preserve">
-    <t t-name="custom_event.events">
-        <div>Here are the events</div>
-    </t>
+	<t t-name="custom_event.events">
+		<div>
+			<table class="table container">
+				<thead>
+					<tr>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Date</th>
+					</tr>
+				</thead>
+                <tbody>
+                <tr t-foreach="events" t-as="event" t-key="event.id">
+                    <td t-out="event.title"></td>
+                    <td t-out="event.location"></td>
+                    <td t-out="event.date"></td>
+                </tr>
+                </tbody>
+			</table>
+		</div>
+	</t>
 </templates>
-
